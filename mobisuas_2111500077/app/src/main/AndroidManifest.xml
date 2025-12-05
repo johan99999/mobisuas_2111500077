@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hanlie.mobisuas_2111500077">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".ClassGlobal"
@@ -10,10 +10,13 @@
         android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Mobisuas_2111500077">
+        android:theme="@style/Theme.Mobisuas_2111500077"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Login"
+            android:exported="true" />
         <activity
             android:name=".SplashScreen"
             android:exported="true">
@@ -27,12 +30,11 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Mobisuas_2111500077.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.Mobisuas_2111500077.NoActionBar"></activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false"/>
+            android:required="false" />
     </application>
 
 </manifest>
