@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_submit"
+        android:title="Submit Laporan"
+        android:icon="@android:drawable/ic_menu_send"/>
+    <item
+        android:id="@+id/menu_riwayat"
+        android:title="Riwayat Laporan"
+        android:icon="@android:drawable/ic_menu_recent_history"/>
+</menu>
