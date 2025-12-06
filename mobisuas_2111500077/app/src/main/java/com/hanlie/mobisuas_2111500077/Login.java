@@ -27,14 +27,13 @@ public class Login extends AppCompatActivity {
     EditText etPhone, etPassword;
     Button btnLogin;
 
-    String URL_LOGIN;   // jangan isi di sini!
+    String URL_LOGIN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // ---- INISIALISASI URL DI SINI (WAJIB) ----
         ClassGlobal global = (ClassGlobal) getApplicationContext();
         URL_LOGIN = global.getUrl() + "login.php";
 
@@ -103,8 +102,8 @@ public class Login extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("aksi", "login");
-                params.put("phone", phone);      // harus sama dengan $_POST['phone']
-                params.put("password", password); // harus sama dengan $_POST['password']
+                params.put("phone", phone);
+                params.put("password", password);
                 return params;
             }
         };

@@ -34,7 +34,7 @@ public class SubmitLaporan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.submit_laporan);
 
-        // === INISIALISASI UI ===
+
         spinnerKategori = findViewById(R.id.spinnerKategori);
         etJudul = findViewById(R.id.etJudul);
         etLokasi = findViewById(R.id.etLokasi);
@@ -43,10 +43,8 @@ public class SubmitLaporan extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnLaporkan = findViewById(R.id.btnLaporkan);
 
-        // === SETUP SPINNER DENGAN HINT ===
         setupSpinnerKategori();
 
-        // === EVENT UPLOAD FOTO ===
         btnUploadFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,25 +53,22 @@ public class SubmitLaporan extends AppCompatActivity {
             }
         });
 
-        // === BUTTON BACK ===
+
         btnBack.setOnClickListener(v -> finish());
 
-        // === TOMBOL SUBMIT ===
+
         btnLaporkan.setOnClickListener(v -> submitForm());
     }
 
-    // ====================================================================
-    // CUSTOM SPINNER DENGAN HINT
-    // ====================================================================
     private void setupSpinnerKategori() {
 
         List<String> kategoriList = new ArrayList<>();
-        kategoriList.add("Pilih Kategori"); // HINT INTERNAL
+        kategoriList.add("Pilih Kategori");
+        kategoriList.add("Tambang Ilegal");
         kategoriList.add("Kebakaran");
-        kategoriList.add("Banjir");
-        kategoriList.add("Kecelakaan");
-        kategoriList.add("Pencurian");
-        kategoriList.add("Lainnya");
+        kategoriList.add("Bencana");
+        kategoriList.add("Gangguan PDAM");
+        kategoriList.add("Penumpukan Sampah");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this,
@@ -83,7 +78,7 @@ public class SubmitLaporan extends AppCompatActivity {
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 if (position == 0) {
-                    // tampilan hint custom
+
                     return getLayoutInflater().inflate(R.layout.custom_spinner_hint, parent, false);
                 }
                 return super.getView(position, convertView, parent);
@@ -91,7 +86,7 @@ public class SubmitLaporan extends AppCompatActivity {
 
             @Override
             public boolean isEnabled(int position) {
-                return position != 0; // hint tidak bisa dipilih
+                return position != 0;
             }
         };
 
@@ -100,9 +95,6 @@ public class SubmitLaporan extends AppCompatActivity {
         spinnerKategori.setSelection(0);
     }
 
-    // ====================================================================
-    // TERIMA FOTO DARI GALERI
-    // ====================================================================
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -113,9 +105,6 @@ public class SubmitLaporan extends AppCompatActivity {
         }
     }
 
-    // ====================================================================
-    // PROSES SUBMIT
-    // ====================================================================
     private void submitForm() {
         String kategori = spinnerKategori.getSelectedItem().toString();
         String judul = etJudul.getText().toString();
@@ -142,10 +131,7 @@ public class SubmitLaporan extends AppCompatActivity {
             return;
         }
 
-        // → Di sini kamu bisa tambahkan pengiriman ke API server
-        // (POST via Volley/Retrofit)
 
-        // Untuk sekarang tampilkan log:
         android.widget.Toast.makeText(this,
                 "Laporan berhasil disiapkan!",
                 android.widget.Toast.LENGTH_LONG).show();
