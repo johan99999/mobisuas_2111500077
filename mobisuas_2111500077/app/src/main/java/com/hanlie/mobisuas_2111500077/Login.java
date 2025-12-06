@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,7 +55,6 @@ public class Login extends AppCompatActivity {
         });
     }
 
-
     private void loginProcess(String phone, String password) {
 
         ProgressDialog progressDialog = new ProgressDialog(Login.this);
@@ -62,42 +62,52 @@ public class Login extends AppCompatActivity {
         progressDialog.show();
 
         StringRequest request = new StringRequest(Request.Method.POST, URL_LOGIN,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
+                response -> {
+                    progressDialog.dismiss();
 
-                        try {
-                            JSONObject json = new JSONObject(response);
+                    try {
+                        JSONObject json = new JSONObject(response);
 
-                            boolean success = json.getBoolean("success");
-                            String message = json.getString("message");
+                        boolean success = json.getBoolean("success");
+                        String message = json.getString("message");
 
-                            if (success) {
-                                Toast.makeText(Login.this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
+                        if (success) {
 
+                            // --------------------------------------------
+                            // Ambil ID USER dari API
+                            // --------------------------------------------
+                            String idUser = json.getString("c_id_user");
 
-                                Intent intent = new Intent(Login.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
+                            // --------------------------------------------
+                            // SIMPAN ke Shared Preferences!
+                            // --------------------------------------------
+                            SharedPreferences prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
 
-                            } else {
-                                Toast.makeText(Login.this, message, Toast.LENGTH_SHORT).show();
-                            }
+                            editor.putString("c_id_user", idUser);
+                            editor.putString("phone", phone);
+                            editor.apply();
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(Login.this, "Error parsing data!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+
+                        } else {
+                            Toast.makeText(Login.this, message, Toast.LENGTH_SHORT).show();
                         }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(Login.this, "Error parsing data!", Toast.LENGTH_SHORT).show();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(Login.this, "Gagal terhubung ke server!", Toast.LENGTH_SHORT).show();
-                    }
+                error -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(Login.this, "Gagal terhubung ke server!", Toast.LENGTH_SHORT).show();
                 }) {
+
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();

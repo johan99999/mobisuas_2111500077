@@ -1,23 +1,38 @@
 package com.hanlie.mobisuas_2111500077;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.hanlie.mobisuas_2111500077.R;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SubmitLaporan extends AppCompatActivity {
 
@@ -27,13 +42,19 @@ public class SubmitLaporan extends AppCompatActivity {
     Button btnLaporkan;
 
     Uri fotoUri;
+    String encodedImage = "";  // Base64
+
     private static final int PICK_IMAGE = 100;
+
+    String URL_SUBMIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.submit_laporan);
 
+        ClassGlobal global = (ClassGlobal) getApplicationContext();
+        URL_SUBMIT = global.getUrl() + "submit_laporan.php";
 
         spinnerKategori = findViewById(R.id.spinnerKategori);
         etJudul = findViewById(R.id.etJudul);
@@ -45,17 +66,12 @@ public class SubmitLaporan extends AppCompatActivity {
 
         setupSpinnerKategori();
 
-        btnUploadFoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent galeri = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(galeri, PICK_IMAGE);
-            }
+        btnUploadFoto.setOnClickListener(v -> {
+            Intent galeri = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(galeri, PICK_IMAGE);
         });
 
-
         btnBack.setOnClickListener(v -> finish());
-
 
         btnLaporkan.setOnClickListener(v -> submitForm());
     }
@@ -77,8 +93,8 @@ public class SubmitLaporan extends AppCompatActivity {
         ) {
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
-                if (position == 0) {
 
+                if (position == 0) {
                     return getLayoutInflater().inflate(R.layout.custom_spinner_hint, parent, false);
                 }
                 return super.getView(position, convertView, parent);
@@ -100,19 +116,45 @@ public class SubmitLaporan extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+
             fotoUri = data.getData();
             btnUploadFoto.setImageURI(fotoUri);
+
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(fotoUri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+                byte[] imageBytes = baos.toByteArray();
+
+                encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void submitForm() {
-        String kategori = spinnerKategori.getSelectedItem().toString();
-        String judul = etJudul.getText().toString();
-        String lokasi = etLokasi.getText().toString();
-        String kronologi = etKronologi.getText().toString();
 
+        String kategori = spinnerKategori.getSelectedItem().toString();
+        String judul = etJudul.getText().toString().trim();
+        String lokasi = etLokasi.getText().toString().trim();
+        String kronologi = etKronologi.getText().toString().trim();
+
+        // Ambil ID user dari SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String idUser = prefs.getString("c_id_user", null);
+
+        if (idUser == null) {
+            Toast.makeText(this, "User tidak ditemukan. Silakan login ulang.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validasi
         if (spinnerKategori.getSelectedItemPosition() == 0) {
-            etJudul.setError("Pilih kategori!");
+            Toast.makeText(this, "Silakan pilih kategori!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -131,11 +173,55 @@ public class SubmitLaporan extends AppCompatActivity {
             return;
         }
 
+        if (encodedImage.isEmpty()) {
+            Toast.makeText(this, "Silakan upload foto!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        android.widget.Toast.makeText(this,
-                "Laporan berhasil disiapkan!",
-                android.widget.Toast.LENGTH_LONG).show();
+        // -----------------------------
+        //     KIRIM KE SERVER API
+        // -----------------------------
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                URL_SUBMIT,
+                response -> {
+                    System.out.println("🔥 RAW RESPONSE FROM SERVER:");
+                    System.out.println(response);
+                    try {
+                        JSONObject json = new JSONObject(response);
 
-        finish();
+                        if (json.getBoolean("success")) {
+                            Toast.makeText(SubmitLaporan.this, "Laporan berhasil dikirim!", Toast.LENGTH_LONG).show();
+                            finish();
+                        } else {
+                            Toast.makeText(SubmitLaporan.this, json.getString("message"), Toast.LENGTH_LONG).show();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> Toast.makeText(SubmitLaporan.this, "Gagal terhubung ke server", Toast.LENGTH_SHORT).show()
+
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("id_user", idUser);
+                params.put("kategori", kategori);
+                params.put("judul", judul);
+                params.put("lokasi", lokasi);
+                params.put("kronologi", kronologi);
+                params.put("foto", encodedImage);
+
+                return params;
+            }
+        };
+
+        RequestQueue queue = Volley.newRequestQueue(SubmitLaporan.this);
+        queue.add(request);
+
     }
 }
