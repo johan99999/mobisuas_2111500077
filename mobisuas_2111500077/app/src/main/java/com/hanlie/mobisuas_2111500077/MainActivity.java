@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.menu_submit) {
-                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                    startActivity(new Intent(MainActivity.this, SubmitLaporan.class));
                 } else if (id == R.id.menu_riwayat) {
                     startActivity(new Intent(MainActivity.this, MainActivity.class));
                 }
