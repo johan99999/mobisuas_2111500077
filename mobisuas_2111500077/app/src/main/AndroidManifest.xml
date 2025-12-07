@@ -37,6 +37,9 @@
             android:exported="false" />
 
 
+        <activity android:name=".RiwayatActivity" />
+
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

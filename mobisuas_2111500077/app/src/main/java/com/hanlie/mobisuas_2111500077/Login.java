@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -73,20 +71,25 @@ public class Login extends AppCompatActivity {
 
                         if (success) {
 
-                            // --------------------------------------------
-                            // Ambil ID USER dari API
-                            // --------------------------------------------
+                            // =============================================
+                            // AMBIL ID USER DARI SERVER
+                            // =============================================
                             String idUser = json.getString("c_id_user");
 
-                            // --------------------------------------------
-                            // SIMPAN ke Shared Preferences!
-                            // --------------------------------------------
+                            // =============================================
+                            // SIMPAN KE SharedPreferences
+                            // =============================================
                             SharedPreferences prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE);
                             SharedPreferences.Editor editor = prefs.edit();
-
                             editor.putString("c_id_user", idUser);
                             editor.putString("phone", phone);
                             editor.apply();
+
+                            // =============================================
+                            // SIMPAN KE ClassGlobal (Wajib untuk Riwayat)
+                            // =============================================
+                            ClassGlobal global = (ClassGlobal) getApplicationContext();
+                            global.setIdUser(idUser);
 
                             Toast.makeText(Login.this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
 
