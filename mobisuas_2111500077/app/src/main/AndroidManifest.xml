@@ -34,7 +34,8 @@
 
         <activity
             android:name=".SubmitLaporan"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Mobisuas_2111500077.NoActionBar"/>
 
 
         <activity android:name=".RiwayatActivity" />

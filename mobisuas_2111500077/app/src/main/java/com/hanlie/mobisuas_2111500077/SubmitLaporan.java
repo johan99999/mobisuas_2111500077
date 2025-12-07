@@ -23,6 +23,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class SubmitLaporan extends AppCompatActivity {
 
     Spinner spinnerKategori;
     EditText etJudul, etLokasi, etKronologi;
-    ImageView btnUploadFoto, btnBack;
+    ImageView btnUploadFoto;
     Button btnLaporkan;
 
     Uri fotoUri;
@@ -53,26 +54,31 @@ public class SubmitLaporan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.submit_laporan);
 
+        // GLOBAL URL
         ClassGlobal global = (ClassGlobal) getApplicationContext();
         URL_SUBMIT = global.getUrl() + "submit_laporan.php";
 
+        // TOOLBAR
+        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+        // INPUT ELEMENTS
         spinnerKategori = findViewById(R.id.spinnerKategori);
         etJudul = findViewById(R.id.etJudul);
         etLokasi = findViewById(R.id.etLokasi);
         etKronologi = findViewById(R.id.etKronologi);
         btnUploadFoto = findViewById(R.id.btnUploadFoto);
-        btnBack = findViewById(R.id.btnBack);
         btnLaporkan = findViewById(R.id.btnLaporkan);
 
         setupSpinnerKategori();
 
+        // UPLOAD FOTO
         btnUploadFoto.setOnClickListener(v -> {
             Intent galeri = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galeri, PICK_IMAGE);
         });
 
-        btnBack.setOnClickListener(v -> finish());
-
+        // KLIK LAPORKAN
         btnLaporkan.setOnClickListener(v -> submitForm());
     }
 
@@ -143,6 +149,7 @@ public class SubmitLaporan extends AppCompatActivity {
         String lokasi = etLokasi.getText().toString().trim();
         String kronologi = etKronologi.getText().toString().trim();
 
+        // AMBIL ID USER DARI LOGIN
         SharedPreferences prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String idUser = prefs.getString("c_id_user", null);
 
@@ -151,7 +158,7 @@ public class SubmitLaporan extends AppCompatActivity {
             return;
         }
 
-
+        // VALIDASI
         if (spinnerKategori.getSelectedItemPosition() == 0) {
             Toast.makeText(this, "Silakan pilih kategori!", Toast.LENGTH_SHORT).show();
             return;
@@ -176,12 +183,16 @@ public class SubmitLaporan extends AppCompatActivity {
             Toast.makeText(this, "Silakan upload foto!", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // REQUEST KE SERVER
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 URL_SUBMIT,
                 response -> {
-                    System.out.println("🔥 RAW RESPONSE FROM SERVER:");
+
+                    System.out.println("🔥 RESPONSE DARI SERVER:");
                     System.out.println(response);
+
                     try {
                         JSONObject json = new JSONObject(response);
 
@@ -197,7 +208,6 @@ public class SubmitLaporan extends AppCompatActivity {
                     }
                 },
                 error -> Toast.makeText(SubmitLaporan.this, "Gagal terhubung ke server", Toast.LENGTH_SHORT).show()
-
         ) {
             @Override
             protected Map<String, String> getParams() {
