@@ -17,13 +17,13 @@ public class LaporanAdapter extends RecyclerView.Adapter<LaporanAdapter.ViewHold
     Context ctx;
     ArrayList<Laporan> data;
 
-    // === CONSTRUCTOR WAJIB ===
+
     public LaporanAdapter(Context ctx, ArrayList<Laporan> data) {
         this.ctx = ctx;
         this.data = data;
     }
 
-    // === INFLATE ITEM XML ===
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,7 +31,7 @@ public class LaporanAdapter extends RecyclerView.Adapter<LaporanAdapter.ViewHold
         return new ViewHolder(v);
     }
 
-    // === SET DATA KE VIEW ===
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         Laporan x = data.get(pos);
@@ -39,11 +39,11 @@ public class LaporanAdapter extends RecyclerView.Adapter<LaporanAdapter.ViewHold
         h.txtJudul.setText(x.judul);
         h.txtStatus.setText(x.status);
         h.txtKategori.setText(x.kategori);
-        h.txtTglLapor.setText(x.terlapor);
-        h.txtTglTanggap.setText(x.ditanggapi);
+        h.txtTglLapor.setText("Waktu Terlapor:\t\t"+x.terlapor);
+        h.txtTglTanggap.setText("Waktu Ditanggapi:\t\t"+x.ditanggapi);
         h.txtTanggapan.setText(x.tanggapan);
 
-        // ICON otomatis berdasarkan kategori
+
         switch (x.kategori) {
             case "Tambang Ilegal":
                 h.icon.setImageResource(R.drawable.tambang_ilegal);
@@ -70,7 +70,7 @@ public class LaporanAdapter extends RecyclerView.Adapter<LaporanAdapter.ViewHold
         return data.size();
     }
 
-    // === HOLDER ===
+
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView icon;
         TextView txtJudul, txtStatus, txtKategori, txtTglLapor, txtTglTanggap, txtTanggapan;

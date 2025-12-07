@@ -28,7 +28,6 @@ public class RiwayatActivity extends AppCompatActivity {
         super.onCreate(b);
         setContentView(R.layout.activity_riwayat);
 
-        // === BACK BUTTON ===
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Riwayat Laporan");
 
@@ -49,10 +48,9 @@ public class RiwayatActivity extends AppCompatActivity {
     private void loadData() {
         ClassGlobal global = (ClassGlobal) getApplicationContext();
 
-        // Ambil id_user dari global
         String idUser = global.getIdUser();
 
-        // Tambahkan ke URL
+
         URL = global.getUrl() + "riwayat_laporan.php?id_user=" + idUser;
 
         Log.d("CEK_URL", "URL: " + URL); // Debug

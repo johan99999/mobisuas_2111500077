@@ -70,29 +70,15 @@ public class Login extends AppCompatActivity {
                         String message = json.getString("message");
 
                         if (success) {
-
-                            // =============================================
-                            // AMBIL ID USER DARI SERVER
-                            // =============================================
                             String idUser = json.getString("c_id_user");
-
-                            // =============================================
-                            // SIMPAN KE SharedPreferences
-                            // =============================================
                             SharedPreferences prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE);
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putString("c_id_user", idUser);
                             editor.putString("phone", phone);
                             editor.apply();
-
-                            // =============================================
-                            // SIMPAN KE ClassGlobal (Wajib untuk Riwayat)
-                            // =============================================
                             ClassGlobal global = (ClassGlobal) getApplicationContext();
                             global.setIdUser(idUser);
-
                             Toast.makeText(Login.this, "Login Berhasil!", Toast.LENGTH_SHORT).show();
-
                             Intent intent = new Intent(Login.this, MainActivity.class);
                             startActivity(intent);
                             finish();

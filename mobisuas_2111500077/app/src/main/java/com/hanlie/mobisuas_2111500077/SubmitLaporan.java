@@ -42,7 +42,7 @@ public class SubmitLaporan extends AppCompatActivity {
     Button btnLaporkan;
 
     Uri fotoUri;
-    String encodedImage = "";  // Base64
+    String encodedImage = "";
 
     private static final int PICK_IMAGE = 100;
 
@@ -143,7 +143,6 @@ public class SubmitLaporan extends AppCompatActivity {
         String lokasi = etLokasi.getText().toString().trim();
         String kronologi = etKronologi.getText().toString().trim();
 
-        // Ambil ID user dari SharedPreferences
         SharedPreferences prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String idUser = prefs.getString("c_id_user", null);
 
@@ -152,7 +151,7 @@ public class SubmitLaporan extends AppCompatActivity {
             return;
         }
 
-        // Validasi
+
         if (spinnerKategori.getSelectedItemPosition() == 0) {
             Toast.makeText(this, "Silakan pilih kategori!", Toast.LENGTH_SHORT).show();
             return;
@@ -177,10 +176,6 @@ public class SubmitLaporan extends AppCompatActivity {
             Toast.makeText(this, "Silakan upload foto!", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // -----------------------------
-        //     KIRIM KE SERVER API
-        // -----------------------------
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 URL_SUBMIT,

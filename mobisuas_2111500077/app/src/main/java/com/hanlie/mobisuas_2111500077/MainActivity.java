@@ -25,14 +25,12 @@ public class MainActivity extends AppCompatActivity {
         navView = findViewById(R.id.navView);
         toolbar = findViewById(R.id.toolbar);
 
-        // Set toolbar as ActionBar
         setSupportActionBar(toolbar);
 
-        // Hamburger icon
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        // Menu click listener
+
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -51,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // buka drawer saat icon hamburger tap
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
