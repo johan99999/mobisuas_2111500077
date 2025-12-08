@@ -54,15 +54,15 @@ public class SubmitLaporan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.submit_laporan);
 
-        // GLOBAL URL
+
         ClassGlobal global = (ClassGlobal) getApplicationContext();
         URL_SUBMIT = global.getUrl() + "submit_laporan.php";
 
-        // TOOLBAR
+
         MaterialToolbar toolbar = findViewById(R.id.topAppBar);
         toolbar.setNavigationOnClickListener(v -> finish());
 
-        // INPUT ELEMENTS
+
         spinnerKategori = findViewById(R.id.spinnerKategori);
         etJudul = findViewById(R.id.etJudul);
         etLokasi = findViewById(R.id.etLokasi);
@@ -72,13 +72,13 @@ public class SubmitLaporan extends AppCompatActivity {
 
         setupSpinnerKategori();
 
-        // UPLOAD FOTO
+
         btnUploadFoto.setOnClickListener(v -> {
             Intent galeri = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galeri, PICK_IMAGE);
         });
 
-        // KLIK LAPORKAN
+
         btnLaporkan.setOnClickListener(v -> submitForm());
     }
 
@@ -149,7 +149,7 @@ public class SubmitLaporan extends AppCompatActivity {
         String lokasi = etLokasi.getText().toString().trim();
         String kronologi = etKronologi.getText().toString().trim();
 
-        // AMBIL ID USER DARI LOGIN
+
         SharedPreferences prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String idUser = prefs.getString("c_id_user", null);
 
@@ -158,7 +158,7 @@ public class SubmitLaporan extends AppCompatActivity {
             return;
         }
 
-        // VALIDASI
+
         if (spinnerKategori.getSelectedItemPosition() == 0) {
             Toast.makeText(this, "Silakan pilih kategori!", Toast.LENGTH_SHORT).show();
             return;
@@ -184,7 +184,7 @@ public class SubmitLaporan extends AppCompatActivity {
             return;
         }
 
-        // REQUEST KE SERVER
+
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 URL_SUBMIT,
